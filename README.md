@@ -1,61 +1,56 @@
 # Model Download and Conversion Script
 
-This script allows you to download a model from HuggingFace and convert it to GGUF format using a specified conversion script.
+Download a Hugging Face model and convert it to GGUF with the llama.cpp tooling.
 
-Requirements
+## Setup (uv)
 
-Make sure to install the necessary Python packages before running the script. You can do this by running:
+- Install [uv](https://docs.astral.sh/uv/getting-started/installation/) if you do not have it yet.
+- Install project dependencies (Python 3.12+):
 
 ```bash
-pip install -r requirements.txt
+uv sync
 ```
-Usage
 
-0.	Clone the llama.cpp Repository:
-Before using the script, you need to clone the llama.cpp repository and install its dependencies. You can do this by running:
+- Prepare llama.cpp (use the same environment so `huggingface-hub` is available):
 
 ```bash
 git clone https://github.com/ggerganov/llama.cpp.git
 cd llama.cpp
-pip install -r requirements.txt
+uv run python -m pip install -r requirements.txt
 cd ..
 ```
 
-1. Download the Model and Convert to GGUF Format
+## Usage
 
-To download a model from HuggingFace and convert it to GGUF format, use the following command:
-
-```bash
-python download_and_convert.py --model_id <HuggingFace_Model_ID> --llama_cpp_path <path_to_llama_cpp_directory> --quantize <QUANTIZE_TYPE>
-```
-2. Optional Arguments:
-
-	•	--model_id: (Required) The HuggingFace model ID that you want to download.
-	•	--download_path: (Optional) The folder name where the model will be saved. The default is ./Download/downloaded_models.
-	•	--revision: (Optional) The specific model version to download (default: main).
-	•	--llama_cpp_path: (Optional) The path to the llama.cpp directory. This is where the conversion script is located and where the converted model will be saved. The default is llama.cpp/.
-	•	--quantize: (Optional) The quantization type for the GGUF model (e.g., f16, q4_0). The default is f16.
-
-Example Command
-
-Here’s an example of how to use the script:
+### Download (optional convert to GGUF)
 
 ```bash
-python script_name.py --model_id EleutherAI/gpt-neo-125M --llama_cpp_path /path/to/llama.cpp --quantize q4_0
+uv run python main.py --model_id <huggingface_model_id> [--download_path <path>] [--revision <rev>] [--force] [--convert] [--llama_cpp_path <path_to_llama.cpp>] [--quantize <type>]
 ```
 
-In this example:
+Important flags:
+- `--convert` / `--no-convert`: toggle GGUF conversion (default: no conversion).
+- `--llama_cpp_path`: path to your `llama.cpp` checkout (default: `./llama.cpp`); used when converting.
+- `--quantize`: GGUF quantization type, e.g. `f16` (default) or `q4_0`.
+- `--force`: re-download even if the target path already exists.
 
-	•	The script downloads the gpt-neo-125M model from HuggingFace.
-	•	The model is saved in the ./Download/downloaded_models/EleutherAI/gpt-neo-125M folder.
-	•	The model is converted to GGUF format and saved as gpt-neo-125M.gguf in the /path/to/llama.cpp/models/ directory using q4_0 quantization.
+Example (download + convert):
 
-Additional Feature:
+```bash
+uv run python main.py --model_id EleutherAI/gpt-neo-125M --llama_cpp_path ./llama.cpp --quantize q4_0 --convert
+```
 
-	•	If the model is already downloaded: The script will prompt you to confirm whether you want to re-download the model. If you choose “n”, the existing model will be used for conversion.
-<br>
+Behavior:
+- If the model already exists locally, the script asks whether to re-download; answering `n` reuses the existing files.
 
----
-References
+### Compatibility entrypoint
 
-For more information on the conversion script and GGUF format, check the  <a href ="https://github.com/ggerganov/llama.cpp/discussions/2948"> Llama.cpp discussions</a>.
+`download_and_convert.py` remains available; it behaves the same as `main.py --convert` by default:
+
+```bash
+uv run python download_and_convert.py --model_id <huggingface_model_id> --llama_cpp_path <path_to_llama.cpp> --quantize q4_0
+```
+
+## References
+
+- [llama.cpp GGUF discussion](https://github.com/ggerganov/llama.cpp/discussions/2948)

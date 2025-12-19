@@ -1,0 +1,9 @@
+[project]
+name = "llm-utils"
+version = "0.1.0"
+description = "Tools to download Hugging Face models and convert them to GGUF"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "huggingface-hub>=1.2.3",
+]
