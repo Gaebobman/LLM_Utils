@@ -11,6 +11,31 @@ Download a Hugging Face model and convert it to GGUF with the llama.cpp tooling.
 uv sync
 ```
 
+## Authentication (Hugging Face)
+
+Private/gated model downloads require a Hugging Face token to be available in the shell environment.
+
+Recommended:
+
+```bash
+# ~/.zshrc
+export HF_TOKEN=hf_xxx_your_token
+```
+
+Apply it to the current shell (or open a new terminal):
+
+```bash
+source ~/.zshrc
+```
+
+Quick verification:
+
+```bash
+uv run python -c "from huggingface_hub import whoami; print(whoami())"
+```
+
+If this prints your account info, `uv run python main.py ...` will use the same token.
+
 - Prepare llama.cpp (use the same environment so `huggingface-hub` is available):
 
 ```bash
